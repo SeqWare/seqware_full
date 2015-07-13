@@ -13,7 +13,7 @@ RUN apt-get -y update ;\
     git clone http://github.com/ansible/ansible.git /tmp/ansible
 WORKDIR /tmp/ansible
 # get a specific version of ansible , add sudo to seqware, create a working directory
-RUN git checkout v1.6.10 ;
+RUN git checkout v1.9.2-1 ;
 ENV PATH /tmp/ansible/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV ANSIBLE_LIBRARY /tmp/ansible/library
 ENV PYTHONPATH /tmp/ansible/lib:$PYTHON_PATH
@@ -22,7 +22,7 @@ WORKDIR /root
 RUN git clone https://github.com/SeqWare/seqware-bag.git
 COPY inventory /etc/ansible/hosts
 WORKDIR /root/seqware-bag 
-RUN git checkout 1.0.0
+RUN git checkout feature/seqware_1.2
 ENV HOSTNAME master
 # hurray! this seems to satisfy gridengine-master's hostname lookup 
 RUN echo "127.0.0.1    master" > /tmp/tmpfile && cat /etc/hosts >> /tmp/tmpfile
@@ -33,7 +33,7 @@ USER seqware
 WORKDIR /home/seqware
 RUN git clone https://github.com/SeqWare/seqware-bag.git
 # setup an ansible script to startup our required services when the container starts
-RUN cd seqware-bag && git checkout 1.0.0
+RUN cd seqware-bag && git checkout feature/seqware_1.2
 COPY ./scripts/start.sh /start.sh
 RUN sudo chmod a+x /start.sh
 
