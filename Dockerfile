@@ -9,14 +9,10 @@ MAINTAINER Denis Yuen <denis.yuen@oicr.on.ca>
 
 # use ansible to create our dockerfile, see http://www.ansible.com/2014/02/12/installing-and-building-docker-with-ansible
 RUN apt-get -y update ;\
-    apt-get install -y python-yaml python-jinja2 git wget sudo;\
-    git clone http://github.com/ansible/ansible.git /tmp/ansible
-WORKDIR /tmp/ansible
-# get a specific version of ansible , add sudo to seqware, create a working directory
-RUN git checkout v1.9.2-1 ;
-ENV PATH /tmp/ansible/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV ANSIBLE_LIBRARY /tmp/ansible/library
-ENV PYTHONPATH /tmp/ansible/lib:$PYTHON_PATH
+    apt-get install -y software-properties-common git wget sudo;
+RUN apt-add-repository ppa:ansible/ansible
+RUN apt-get -y update ;\
+    apt-get install -y ansible;
 # setup seqware 
 WORKDIR /root 
 RUN git clone https://github.com/SeqWare/seqware-bag.git
@@ -26,7 +22,7 @@ RUN git checkout feature/seqware_1.2
 ENV HOSTNAME master
 # hurray! this seems to satisfy gridengine-master's hostname lookup 
 RUN echo "127.0.0.1    master" > /tmp/tmpfile && cat /etc/hosts >> /tmp/tmpfile
-RUN cat /tmp/tmpfile > /etc/hosts && ansible-playbook seqware-install.yml -c local --extra-vars "seqware_version=1.1.1 docker=yes"
+RUN cat /tmp/tmpfile > /etc/hosts && ansible-playbook seqware-install.yml -c local --extra-vars "seqware_version=1.2.0-alpha.0 docker=yes"
 # at this point, seqware has been fully setup
 ENV HOME /home/seqware
 USER seqware
